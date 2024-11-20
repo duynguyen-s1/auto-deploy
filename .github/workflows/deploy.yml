@@ -31,7 +31,9 @@ jobs:
         with:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Event received
-        run: echo ${{ github.event.client_payload }}
+        run: |
+          echo ${{ github.event.client_payload.tag }}
+          echo ${{ github.event.client_payload.env }}
       # - name: Environment variables
       #   uses: ./.github/actions/env
       #   with:
