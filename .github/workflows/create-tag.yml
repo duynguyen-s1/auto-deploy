@@ -3,10 +3,10 @@ name: Create Tag
 on:
   workflow_dispatch:
     inputs:
-      commit:
-        description: Commit ID
-        required: true
-        type: string
+      # commit:
+      #   description: Commit ID
+      #   required: true
+      #   type: string
       tagname:
         description: Tag Name
         required: true
