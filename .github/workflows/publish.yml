@@ -1,0 +1,38 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  create-release-pull-request:
+    runs-on: ubuntu-latest
+    name: "Create release pull request"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup node environment
+        uses: ./.github/actions/setup
+        with:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Setup GitHub User
+        run: |
+          git config user.name "silvios-sst"
+          git config user.email "alan.sierchio@system1.com"
+      - name: Create release PR or publish
+        id: changesets
+        uses: changesets/action@v1
+        env:
+          # https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs
+          # the PR has to be opened by a user that is not the github-actions bot. The github-actions bot can not trigger subsequent workflows
+          # to prevent it from accidently creating a recurrsion loop. This is by design. This token is used to create the PR. The
+          # token has access to all my repos so to be safe, I created a new github account and gave it access to only this repo.
+          # the token is set to never expire and is set in the github actions secret. This method is the standard method recommended
+          # by github themselves.
+          GITHUB_TOKEN: ${{ secrets.PAT_ACCESS_TOKEN }}
+        with:
+          publish: echo ""
+          setupGitUser: false

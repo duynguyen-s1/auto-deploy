@@ -1,0 +1,38 @@
+name: Chaos
+
+on:
+  workflow_dispatch:
+  schedule:
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: "0 18 1 * *"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  chaos:
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Environment Variables
+        uses: ./.github/actions/env
+        with:
+          vars: ${{ toJSON(vars) }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          role-duration-seconds: 3600
+          role-session-name: plte-gha-session
+          aws-region: us-east-1
+      - name: Install Browsers
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Unleash Chaos
+        run: pnpm run chaos

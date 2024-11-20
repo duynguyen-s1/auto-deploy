@@ -1,0 +1,91 @@
+name: Build & Deploy Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy to"
+        required: true
+        type: environment
+  
+  repository_dispatch:
+    types: [trigger-workflow]
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency: deploy-${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  build-deploy:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    name: "Build and Deploy"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Event received
+        run: echo ${{ github.event.client_payload }}
+      # - name: Environment variables
+      #   uses: ./.github/actions/env
+      #   with:
+      #     vars: ${{ toJSON(vars) }}
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+      #     role-duration-seconds: 3600
+      #     role-session-name: plte-gha-session
+      #     aws-region: us-east-1
+      # - name: Build
+      #   run: pnpm build
+      # - name: Deploy
+      #   run: pnpm run deploy --filter=@serp/*
+
+  # validate:
+  #   runs-on: ubuntu-latest
+  #   environment: ${{ inputs.environment }}
+  #   name: Validate deployment
+  #   needs: [build-deploy]
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Setup
+  #       uses: ./.github/actions/setup
+  #       with:
+  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #     - name: Environment variables
+  #       uses: ./.github/actions/env
+  #       with:
+  #         vars: ${{ toJSON(vars) }}
+  #     - name: Install Playwright browsers
+  #       run: pnpm run playwright-browsers
+  #     - name: Validate deployment
+  #       run: pnpm validate-deployment
+
+  # e2e-test:
+  #   environment: ${{ inputs.environment }}
+  #   name: "Run end-to-end tests"
+  #   needs: [validate]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Setup
+  #       uses: ./.github/actions/setup
+  #       with:
+  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #     - name: Environment variables
+  #       uses: ./.github/actions/env
+  #       with:
+  #         vars: ${{ toJSON(vars) }}
+  #     - name: Install Playwright browsers
+  #       run: pnpm run playwright-browsers
+  #     - name: Run E2E tests
+  #       run: pnpm run e2e-tests

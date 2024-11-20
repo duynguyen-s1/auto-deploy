@@ -1,0 +1,16 @@
+name: "Close stale issues and pull requests"
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v8
+        with:
+          stale-issue-message: "This issue is stale because it has been open for 30 days with no activity. Please review this issue and see if it can be closed or updated."
+          stale-pr-message: "This pull request is stale because it has been open for 30 days with no activity. Please review this pull request and see if it can be closed or updated."
+          days-before-stale: 30
+          days-before-close: 5

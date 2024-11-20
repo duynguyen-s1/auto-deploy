@@ -1,0 +1,21 @@
+inputs:
+  NPM_TOKEN:
+    description: "NPM token"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: pnpm
+        registry-url: "https://system1.jfrog.io/system1/api/npm/npm-virtual/"
+        always-auth: true
+      env:
+        NPM_TOKEN: ${{ inputs.NPM_TOKEN }}
+    - run: pnpm install
+      shell: bash
+      env:
+        NPM_TOKEN: ${{ inputs.NPM_TOKEN }}

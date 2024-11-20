@@ -1,0 +1,41 @@
+name: Create Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: Commit ID
+        required: true
+        type: string
+      tagname:
+        description: Tag Name
+        required: true
+        type: string
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: git tag ${{ inputs.tagname }} ${{ inputs.commit }}
+      - run: git push origin ${{ inputs.tagname }}
+  
+  trigger-stage-deploy:
+    needs: [tag]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger deploy workflow for stage
+        run: |
+          repo_owner = "duynguyen-s1"
+          repo_name = "auto-deploy"
+          event_type = "trigger-workflow" 
+          tag = ${{github.event.inputs.tagname}}
+          env = "stage"
+
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.PAT_ACCESS_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/$repo_owner/$repo_name/dispatches \
+            -d "{\"event_type\": \"$event_type\", \"client_payload\": {\"tag\": \"$tag\", \"env\": \"$env\" }}"
