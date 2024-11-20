@@ -26,11 +26,11 @@ jobs:
     steps:
       - name: Trigger deploy workflow for stage
         run: |
-          repo_owner = "duynguyen-s1"
-          repo_name = "auto-deploy"
-          event_type = "trigger-workflow" 
-          tag = ${{github.event.inputs.tagname}}
-          env = "stage"
+          repo_owner="duynguyen-s1"
+          repo_name="auto-deploy"
+          event_type="trigger-workflow" 
+          tag=${{github.event.inputs.tagname}}
+          env="stage"
 
           curl -L \
             -X POST \
