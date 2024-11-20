@@ -11,9 +11,6 @@ on:
   repository_dispatch:
     types: [trigger-workflow]
 
-env:
-  ENVIRONMENT: ${{ inputs.environment || github.event.client_payload.env}}
-
 permissions:
   id-token: write
   contents: read
@@ -24,7 +21,7 @@ jobs:
   build-deploy:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    environment: ${{ env.ENVIRONMENT }}
+    environment: ${{ inputs.environment || github.event.client_payload.env}}
     name: "Build and Deploy"
     steps:
       - name: Checkout
@@ -37,7 +34,7 @@ jobs:
         run: |
           echo ${{ github.event.client_payload.tag }}
           echo ${{ github.event.client_payload.env }}
-          echo ${{env.ENVIRONMENT}}
+          echo ${{ inputs.environment || github.event.client_payload.env}}
       # - name: Environment variables
       #   uses: ./.github/actions/env
       #   with:
