@@ -30,7 +30,7 @@ jobs:
           repo_name="auto-deploy"
           event_type="trigger-workflow" 
           tag=${{github.event.inputs.tagname}}
-          env="stage"
+          env="duy"
 
           curl -L \
             -X POST \
