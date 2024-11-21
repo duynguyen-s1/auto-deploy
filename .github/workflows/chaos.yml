@@ -2,9 +2,9 @@ name: Chaos
 
 on:
   workflow_dispatch:
-  schedule:
+  # schedule:
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: "0 18 1 * *"
+    # - cron: "0 18 1 * *"
 
 permissions:
   id-token: write
