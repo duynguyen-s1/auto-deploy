@@ -1,13 +1,13 @@
 name: Pull Request
 
 on:
-  workflow_call:
-  workflow_dispatch:
-  pull_request:
-    types: ["assigned", "opened", "synchronize", "reopened", "edited"]
-  push:
-    branches:
-      - "changeset-release/main"
+  # workflow_call:
+  # workflow_dispatch:
+  # pull_request:
+  #   types: ["assigned", "opened", "synchronize", "reopened", "edited"]
+  # push:
+  #   branches:
+  #     - "changeset-release/main"
 
 jobs:
   e2e-tests:
