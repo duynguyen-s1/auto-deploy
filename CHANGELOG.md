@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 2.3.0
+
+### Minor Changes
+
+- 07d0feb: Update html content
+
 ## 2.2.0
 
 ### Minor Changes
