@@ -2,12 +2,12 @@ name: Create Tag then Trigger Stage Deploy
 
 on:
   workflow_dispatch:
-  pull_request_target:
+  pull_request:
     # Execute the action on closed (merged) PR.
     types: 
       - closed
     branches:
-      - 'changeset-release/**'
+      - 'changeset-release/main'
 
 jobs:
   trigger-create-tag:
