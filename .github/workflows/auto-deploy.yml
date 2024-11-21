@@ -6,12 +6,10 @@ on:
     # Execute the action on closed (merged) PR.
     types: 
       - closed
-    branches:
-      - 'changeset-release/main'
 
 jobs:
   trigger-create-tag:
-    if: github.event.pull_request.merged == true
+    if: startsWith(github.head_ref, 'changeset-release/') && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Show GitHub context
