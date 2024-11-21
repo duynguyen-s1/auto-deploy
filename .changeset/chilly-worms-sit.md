@@ -1,5 +1,0 @@
----
-"auto-deploy": major
----
-
-restructure
