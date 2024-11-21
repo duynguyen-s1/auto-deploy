@@ -3,21 +3,24 @@ name: Create Tag
 on:
   workflow_dispatch:
     inputs:
-      # commit:
-      #   description: Commit ID
-      #   required: true
-      #   type: string
+      commit:
+        description: Commit ID
+        required: true
+        type: string
       tagname:
         description: Tag Name
         required: true
         type: string
+
+  repository_dispatch:
+    types: [trigger-create-tag]
 
 jobs:
   tag:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: git tag ${{ inputs.tagname }} ${{ inputs.commit }}
+      - run: git tag ${{ inputs.tagname || github.event.client_payload.tag}} ${{ inputs.commit || github.event.client_payload.commitId }}
       - run: git push origin ${{ inputs.tagname }}
   
   trigger-stage-deploy:
