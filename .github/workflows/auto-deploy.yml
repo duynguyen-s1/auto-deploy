@@ -3,15 +3,13 @@ name: Create Tag then Trigger Stage Deploy
 on:
   workflow_dispatch:
   pull_request_target:
-    # For the changeset-release/main branch only.
-    branches:
-      - 'changeset-release/main'
     # Execute the action on closed (merged) PR.
     types: 
       - closed
 
 jobs:
   trigger-create-tag:
+    if:  startsWith(github.head_ref, 'changeset-release/')
     runs-on: ubuntu-latest
     steps:
       - name: Show GitHub context
