@@ -15,13 +15,18 @@ on:
   repository_dispatch:
     types: [trigger-create-tag]
 
+env:
+  TAG: ${{ inputs.tagname || github.event.client_payload.tag}}
+  COMMIT_ID: ${{ inputs.commit || github.event.client_payload.commitId }}
+  ENVIRONMENT: ${{ github.event.client_payload.environment }}
+
 jobs:
   tag:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: git tag ${{ inputs.tagname || github.event.client_payload.tag}} ${{ inputs.commit || github.event.client_payload.commitId }}
-      - run: git push origin ${{ inputs.tagname }}
+      - run: git tag $TAG $COMMIT_ID
+      - run: git push origin $TAG
   
   trigger-stage-deploy:
     needs: [tag]
@@ -32,8 +37,8 @@ jobs:
           repo_owner="duynguyen-s1"
           repo_name="auto-deploy"
           event_type="trigger-deploy" 
-          tag=${{github.event.inputs.tagname}}
-          env="duy"
+          tag=$TAG
+          env=$ENVIRONMENT
 
           curl -L \
             -X POST \

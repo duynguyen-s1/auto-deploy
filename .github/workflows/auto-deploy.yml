@@ -6,10 +6,12 @@ on:
     # Execute the action on closed (merged) PR.
     types: 
       - closed
+    branches:
+      - 'changeset-release/**'
 
 jobs:
   trigger-create-tag:
-    if:  startsWith(github.head_ref, 'changeset-release/')
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Show GitHub context
@@ -24,6 +26,7 @@ jobs:
           event_type="trigger-create-tag" 
           tag=${{github.run_id}}
           commitId=${{github.sha}}
+          environment="stage"
 
           curl -L \
             -X POST \
@@ -31,4 +34,4 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.PAT_ACCESS_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/$repo_owner/$repo_name/dispatches \
-            -d "{\"event_type\": \"$event_type\", \"client_payload\": {\"tag\": \"$tag\", \"commitId\": \"$commitId\" }}"
+            -d "{\"event_type\": \"$event_type\", \"client_payload\": {\"tag\": \"$tag\", \"commitId\": \"$commitId\", \"environment\": \"$environment\" }}"
