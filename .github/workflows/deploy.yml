@@ -9,7 +9,7 @@ on:
         type: environment
   
   repository_dispatch:
-    types: [trigger-workflow]
+    types: [trigger-deploy]
 
 permissions:
   id-token: write

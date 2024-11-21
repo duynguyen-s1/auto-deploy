@@ -28,7 +28,7 @@ jobs:
         run: |
           repo_owner="duynguyen-s1"
           repo_name="auto-deploy"
-          event_type="trigger-workflow" 
+          event_type="trigger-deploy" 
           tag=${{github.event.inputs.tagname}}
           env="duy"
 

@@ -1,0 +1,36 @@
+name: Create Tag then Trigger Stage Deploy
+
+on:
+  workflow_dispatch:
+  pull_request:
+    # For the changeset-release/main branch only.
+    branches:
+      - changeset-release/main
+    # Execute the action on closed (merged) PR.
+    types:
+      [closed]
+
+jobs:
+  trigger-create-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      # - name: Trigger deploy workflow for stage
+      #   run: |
+      #     repo_owner="duynguyen-s1"
+      #     repo_name="auto-deploy"
+      #     event_type="trigger-create-tag" 
+      #     tag=${{github.event.inputs.tagname}}
+      #     commitId="duy"
+
+      #     curl -L \
+      #       -X POST \
+      #       -H "Accept: application/vnd.github+json" \
+      #       -H "Authorization: Bearer ${{ secrets.PAT_ACCESS_TOKEN }}" \
+      #       -H "X-GitHub-Api-Version: 2022-11-28" \
+      #       https://api.github.com/repos/$repo_owner/$repo_name/dispatches \
+      #       -d "{\"event_type\": \"$event_type\", \"client_payload\": {\"tag\": \"$tag\", \"env\": \"$env\" }}"
