@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 2.5.0
+
+### Minor Changes
+
+- c19b1c2: Update content
+
 ## 2.4.0
 
 ### Minor Changes
