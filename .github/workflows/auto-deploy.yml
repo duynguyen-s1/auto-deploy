@@ -22,7 +22,7 @@ jobs:
       run: |
         latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
         echo $latest_tag
-        next_tag = $(($latest_tag + 1))
+        next_tag=$(($latest_tag + 1))
         echo $next_tag
   trigger-create-tag:
     if: startsWith(github.head_ref, 'changeset-release/') && github.event.pull_request.merged == true
