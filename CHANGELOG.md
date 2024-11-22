@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 2.4.0
+
+### Minor Changes
+
+- 21a41e1: Hi
+
 ## 2.3.0
 
 ### Minor Changes
