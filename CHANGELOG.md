@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 2.6.0
+
+### Minor Changes
+
+- 24d5b23: update content
+
 ## 2.5.0
 
 ### Minor Changes
