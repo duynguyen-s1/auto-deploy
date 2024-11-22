@@ -18,7 +18,7 @@ on:
 env:
   TAG: ${{ inputs.tagname || github.event.client_payload.tag}}
   COMMIT_ID: ${{ inputs.commit || github.event.client_payload.commitId }}
-  ENVIRONMENT: ${{ github.event.client_payload.environment }}
+  ENVIRONMENT: ${{ github.event.client_payload.environment || 'stage'}}
 
 jobs:
   tag:
