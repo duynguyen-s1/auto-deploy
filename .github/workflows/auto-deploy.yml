@@ -8,6 +8,20 @@ on:
       - closed
 
 jobs:
+  get-latest-tag:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    - name: Get Tags
+      id: tags
+      run: |
+        git fetch --tags
+        echo "Tags fetched"      
+    - name: Get Latest Tag
+      id: latest-tag
+      run: |
+        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
   trigger-create-tag:
     if: startsWith(github.head_ref, 'changeset-release/') && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
