@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 2.8.0
+
+### Minor Changes
+
+- 9e3d84d: content update
+
 ## 2.7.0
 
 ### Minor Changes
