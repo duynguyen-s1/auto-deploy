@@ -8,37 +8,31 @@ on:
       - closed
 
 jobs:
-  get-latest-tag:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-    - name: Get Tags
-      id: tags
-      run: |
-        git fetch --tags
-        echo "Tags fetched"      
-    - name: Get Latest Release Tag
-      run: |
-        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-        echo $latest_tag
-        next_tag=$(($latest_tag + 1))
-        echo $next_tag
   trigger-create-tag:
     if: startsWith(github.head_ref, 'changeset-release/') && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - name: Show GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Get Tags
+        id: tags
+        run: |
+          git fetch --tags
+      - name: Get Latest Release Tag
+        id: latest-tag
+        run: |
+          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo $latest_tag
+          next_tag=$(($latest_tag + 1))
+          echo $next_tag
+          echo "::set-output name=tag::${next_tag}"
 
       - name: Trigger deploy workflow for stage
         run: |
           repo_owner="duynguyen-s1"
           repo_name="auto-deploy"
           event_type="trigger-create-tag" 
-          tag=${{github.run_id}}
+          tag="${{ steps.latest-tag.outputs.tag }}"
           commitId=${{github.sha}}
           environment="stage"
 
