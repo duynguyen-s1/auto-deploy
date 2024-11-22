@@ -21,11 +21,14 @@ jobs:
       - name: Get Latest Release Tag
         id: latest-tag
         run: |
-          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-          echo $latest_tag
-          next_tag=$(($latest_tag + 1))
-          echo $next_tag
-          echo "::set-output name=tag::${next_tag}"
+          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo $LATEST_TAG
+          IFS='.' read -ra VERSION <<< LATEST_TAG
+          PUMP_VER=$((VERSION[1]+1))
+          NEXT_TAG="${VERSION[0]}.$PUMP_VER"
+          echo $NEXT_TAG
+          echo "tag=${NEXT_TAG}" >> $GITHUB_OUTPUT
+          echo "::set-output name=tag::${NEXT_TAG}"
 
       - name: Trigger deploy workflow for stage
         run: |
