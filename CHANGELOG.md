@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 2.7.0
+
+### Minor Changes
+
+- b640cf9: Content update
+
 ## 2.6.0
 
 ### Minor Changes
