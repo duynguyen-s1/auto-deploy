@@ -1,5 +1,12 @@
 # auto-deploy
 
+## 3.1.0
+
+### Minor Changes
+
+- 5f259e0: content update
+- e02770b: content update
+
 ## 3.0.0
 
 ### Major Changes
