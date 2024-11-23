@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 3.1.0
+
+### Minor Changes
+
+- e02770b: content update
+
 ## 3.0.0
 
 ### Major Changes
