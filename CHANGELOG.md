@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 3.0.0
+
+### Major Changes
+
+- 98c71e9: change heading
+
 ## 2.9.0
 
 ### Minor Changes
