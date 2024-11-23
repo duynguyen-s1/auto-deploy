@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 2.9.0
+
+### Minor Changes
+
+- 1dd066f: update
+
 ## 2.8.0
 
 ### Minor Changes
