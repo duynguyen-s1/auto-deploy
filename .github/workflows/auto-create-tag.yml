@@ -88,9 +88,9 @@ jobs:
 
       - name: New tag
         run: echo ${{steps.latest-tag.outputs.tag}}
-      # - uses: actions/checkout@v4
-      # - run: git tag $TAG $COMMIT_ID
-      # - run: git push origin $TAG
+      - uses: actions/checkout@v4
+      - run: git tag $TAG $COMMIT_ID
+      - run: git push origin $TAG
   
   # trigger-stage-deploy:
   #   needs: [tag]
