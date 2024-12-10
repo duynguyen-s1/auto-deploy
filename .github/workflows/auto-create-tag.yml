@@ -61,10 +61,13 @@ jobs:
       - name: Created tag
         run: echo ${{steps.generate-tag.outputs.result}}
 
-      - name: Get latest release tag
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
+      
+      - name: Get Tags
+        id: tags
+        run: |
+          git fetch --tags
+
       - name: Check for tag
         id: latest-tag
         run: |
