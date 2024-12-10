@@ -62,7 +62,7 @@ jobs:
         run: echo ${{steps.generate-tag.outputs.result}}
 
       - uses: actions/checkout@v4
-
+      
       - name: Get Tags
         id: tags
         run: |
@@ -74,7 +74,7 @@ jobs:
           TAG=${{steps.generate-tag.outputs.result}}
           if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
             echo "Tag ${TAG} exists"
-            LATEST_TAG=$(git describe --tags --abbrev=0)
+            LATEST_TAG=$(git describe --tags `git rev-list --tags --all --max-count=1`)
             echo $LATEST_TAG
             IFS='.' read -ra VERSION <<< "$LATEST_TAG"
             echo ${VERSION[0]}
