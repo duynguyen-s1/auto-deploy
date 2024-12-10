@@ -2,23 +2,23 @@ name: Auto Create Tag
 
 on:
   workflow_dispatch:
-  #   inputs:
-  #     commit:
-  #       description: Commit ID
-  #       required: true
-  #       type: string
-  #     tagname:
-  #       description: Tag Name
-  #       required: true
-  #       type: string
+    inputs:
+      commit:
+        description: Commit ID
+        required: true
+        type: string
+      # tagname:
+      #   description: Tag Name
+      #   required: true
+      #   type: string
 
-  # repository_dispatch:
-  #   types: [trigger-create-tag]
+  repository_dispatch:
+    types: [trigger-create-tag]
 
-# env:
-#   TAG: ${{ inputs.tagname || github.event.client_payload.tag}}
-#   COMMIT_ID: ${{ inputs.commit || github.event.client_payload.commitId }}
-#   ENVIRONMENT: ${{ github.event.client_payload.environment || 'stage'}}
+env:
+  # TAG: ${{ inputs.tagname || github.event.client_payload.tag}}
+  COMMIT_ID: ${{ inputs.commit || github.event.client_payload.commitId }}
+  ENVIRONMENT: ${{ github.event.client_payload.environment || 'stage'}}
 
 jobs:
   tag:
@@ -68,7 +68,7 @@ jobs:
       - name: Check for tag
         id: latest-tag
         run: |
-          TAG="${{steps.generate-tag.outputs.result}}"
+          TAG=${{steps.generate-tag.outputs.result}}
           if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
             echo "Tag ${TAG} exists"
             LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
