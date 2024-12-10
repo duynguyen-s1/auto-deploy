@@ -1,0 +1,112 @@
+name: Auto Create Tag
+
+on:
+  # workflow_dispatch:
+  #   inputs:
+  #     commit:
+  #       description: Commit ID
+  #       required: true
+  #       type: string
+  #     tagname:
+  #       description: Tag Name
+  #       required: true
+  #       type: string
+
+  # repository_dispatch:
+  #   types: [trigger-create-tag]
+
+# env:
+#   TAG: ${{ inputs.tagname || github.event.client_payload.tag}}
+#   COMMIT_ID: ${{ inputs.commit || github.event.client_payload.commitId }}
+#   ENVIRONMENT: ${{ github.event.client_payload.environment || 'stage'}}
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        id: generate-tag
+        with:
+          script: |
+            const fullYear = new Date().getFullYear();
+            const shortYear = new Date().toLocaleDateString("en", {year: "2-digit"});
+            const week = 7 * 24 * 60 * 60 * 1000;
+            const today = new Date(); // the month is 0-indexed
+            today.setHours(01, 01, 01)
+
+            // Get the first Wednesday of the year
+            function getWednesday(d) {
+              d = new Date(d);
+              const day = d.getDay(),
+                diff = d.getDate() - day + (day == 0 ? -4 : 3); // adjust when day is sunday
+              return new Date(d.setDate(diff));
+            }
+            const firstWednesdayofYear = getWednesday(new Date(fullYear, 0, 1)); // the month is 0-indexed
+
+
+            // Calculate the number of weeks between today and the first Wednesday of the year
+            function getWeeksBetween(d1, d2) {
+                return ((d2 - d1) / week) * -1;
+            }
+
+            const weeksBetween = getWeeksBetween(today, firstWednesdayofYear);
+
+            function getCurrentSprint(weeksBetween) {
+              const day = today.getDay(),
+                sprint = Math.ceil(weeksBetween / 2);
+              return sprint;
+            }
+            const currentSprint = getCurrentSprint(weeksBetween);
+            return `${shortYear}.${currentSprint}.1`;
+      - name: Created tag
+        run: echo "${{steps.generate-tag.outputs.result}}"
+
+      - name: Check for Tag
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+        id: latest-tag
+      - run: |
+          TAG="${{steps.generate-tag.outputs.result}}"
+          if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
+            echo "Tag ${TAG} exists"
+            LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+            echo $LATEST_TAG
+            IFS='.' read -ra VERSION <<< "$LATEST_TAG"
+            echo ${VERSION[0]}
+            echo ${VERSION[1]}
+            echo ${VERSION[2]}
+            PUMP_VER=$((VERSION[2]+1))
+            NEXT_TAG="${VERSION[0]}.${VERSION[1]}.$PUMP_VER"
+            echo $NEXT_TAG
+            echo "tag=${NEXT_TAG}" >> $GITHUB_OUTPUT
+          else
+            echo "Tag ${TAG} does not exist"
+            echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: New tag
+        run: echo "${{steps.latest-tag.outputs.tag}}"
+      # - uses: actions/checkout@v4
+      # - run: git tag $TAG $COMMIT_ID
+      # - run: git push origin $TAG
+  
+  # trigger-stage-deploy:
+  #   needs: [tag]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Trigger deploy workflow for stage
+  #       run: |
+  #         repo_owner="duynguyen-s1"
+  #         repo_name="auto-deploy"
+  #         event_type="trigger-deploy" 
+  #         tag=$TAG
+  #         env=$ENVIRONMENT
+
+  #         curl -L \
+  #           -X POST \
+  #           -H "Accept: application/vnd.github+json" \
+  #           -H "Authorization: Bearer ${{ secrets.PAT_ACCESS_TOKEN }}" \
+  #           -H "X-GitHub-Api-Version: 2022-11-28" \
+  #           https://api.github.com/repos/$repo_owner/$repo_name/dispatches \
+  #           -d "{\"event_type\": \"$event_type\", \"client_payload\": {\"tag\": \"$tag\", \"env\": \"$env\" }}"
