@@ -12,8 +12,8 @@ on:
         required: true
         type: string
 
-  repository_dispatch:
-    types: [trigger-create-tag]
+  # repository_dispatch:
+  #   types: [trigger-create-tag]
 
 env:
   TAG: ${{ inputs.tagname || github.event.client_payload.tag}}

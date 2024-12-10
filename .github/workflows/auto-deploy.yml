@@ -12,33 +12,12 @@ jobs:
     if: startsWith(github.head_ref, 'changeset-release/') && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Get Tags
-        id: tags
-        run: |
-          git fetch --tags
-      - name: Get Latest Release Tag
-        id: latest-tag
-        run: |
-          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-          echo $LATEST_TAG
-          IFS='.' read -ra VERSION <<< "$LATEST_TAG"
-          echo ${VERSION[0]}
-          echo ${VERSION[1]}
-          PUMP_VER=$((VERSION[1]+1))
-          NEXT_TAG="${VERSION[0]}.$PUMP_VER"
-          echo $NEXT_TAG
-          echo "tag=${NEXT_TAG}" >> $GITHUB_OUTPUT
-
-      - name: Trigger deploy workflow for stage
+      - name: Trigger create-tag workflow
         run: |
           repo_owner="duynguyen-s1"
           repo_name="auto-deploy"
           event_type="trigger-create-tag" 
-          tag="${{ steps.latest-tag.outputs.tag }}"
           commitId=${{github.sha}}
-          environment="stage"
 
           curl -L \
             -X POST \
@@ -46,4 +25,4 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.PAT_ACCESS_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/$repo_owner/$repo_name/dispatches \
-            -d "{\"event_type\": \"$event_type\", \"client_payload\": {\"tag\": \"$tag\", \"commitId\": \"$commitId\", \"environment\": \"$environment\" }}"
+            -d "{\"event_type\": \"$event_type\", \"client_payload\": {\"commitId\": \"$commitId\"}}"
