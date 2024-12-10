@@ -59,14 +59,15 @@ jobs:
             const currentSprint = getCurrentSprint(weeksBetween);
             return `${shortYear}.${currentSprint}.1`;
       - name: Created tag
-        run: echo "${{steps.generate-tag.outputs.result}}"
+        run: echo ${{steps.generate-tag.outputs.result}}
 
-      - name: Check for Tag
+      - name: Get latest release tag
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Check for tag
         id: latest-tag
-      - run: |
+        run: |
           TAG="${{steps.generate-tag.outputs.result}}"
           if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
             echo "Tag ${TAG} exists"
@@ -86,7 +87,7 @@ jobs:
           fi
 
       - name: New tag
-        run: echo "${{steps.latest-tag.outputs.tag}}"
+        run: echo ${{steps.latest-tag.outputs.tag}}
       # - uses: actions/checkout@v4
       # - run: git tag $TAG $COMMIT_ID
       # - run: git push origin $TAG
