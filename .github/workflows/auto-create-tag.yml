@@ -76,14 +76,19 @@ jobs:
             echo "Tag ${TAG} exists"
             LATEST_TAG=$(git describe --tags --exclude ${TAG} `git rev-list --tags --max-count=1`)
             echo $LATEST_TAG
-            # IFS='.' read -ra VERSION <<< "$LATEST_TAG"
-            # echo ${VERSION[0]}
-            # echo ${VERSION[1]}
-            # echo ${VERSION[2]}
-            # PUMP_VER=$((VERSION[2]+1))
-            # NEXT_TAG="${VERSION[0]}.${VERSION[1]}.$PUMP_VER"
-            # echo $NEXT_TAG
-            # echo "tag=${NEXT_TAG}" >> $GITHUB_OUTPUT
+            
+            while [git show-ref --tags --verify --quiet "refs/tags/${TAG}"]
+            do
+              IFS='.' read -ra VERSION <<< "$LATEST_TAG"
+              echo ${VERSION[0]}
+              echo ${VERSION[1]}
+              echo ${VERSION[2]}
+              PUMP_VER=$((VERSION[2]+1))
+              NEXT_TAG="${VERSION[0]}.${VERSION[1]}.$PUMP_VER"
+              TAG=NEXT_TAG
+            done
+            echo $TAG
+            echo "tag=${TAG}" >> $GITHUB_OUTPUT
           else
             echo "Tag ${TAG} does not exist"
             echo "tag=${TAG}" >> $GITHUB_OUTPUT
