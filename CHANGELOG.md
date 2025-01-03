@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 4.0.0
+
+### Major Changes
+
+- 7a6e850: New lp
+
 ## 3.1.0
 
 ### Minor Changes
