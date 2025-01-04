@@ -70,7 +70,7 @@ jobs:
             const currentSprint = getCurrentSprint(weeksBetween);
             let releaseNum = 1;
             let tag = `${shortYear}.${currentSprint}.${releaseNum}`;
-            while (tag === '${{ steps.last-tag.outputs.GIT_TAG }}') {
+            while (tag == '${{ steps.last-tag.outputs.GIT_TAG }}') {
               releaseNum++;
               tag = `${shortYear}.${currentSprint}.${releaseNum}`;
             }
