@@ -68,9 +68,13 @@ jobs:
               return sprint;
             }
             const currentSprint = getCurrentSprint(weeksBetween);
-            let tag = `${shortYear}.${currentSprint}.1`;
-            
-            return 
+            let releaseNum = 1;
+            let tag = `${shortYear}.${currentSprint}.${releaseNum}`;
+            while (tag === '${{ steps.last-tag.outputs.GIT_TAG }}') {
+              releaseNum++;
+              tag = `${shortYear}.${currentSprint}.${releaseNum}`;
+            }
+            return tag;
       - name: Created tag
         run: echo ${{steps.generate-tag.outputs.result}}
 
