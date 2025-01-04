@@ -38,7 +38,9 @@ jobs:
         id: generate-tag
         with:
           script: |
-            console.log('${{ steps.last-tag.outputs.GIT_TAG }}')
+            let repoTag = '${{ steps.last-tag.outputs.GIT_TAG }}';
+            repoTag = repoTag.trim();
+
             const fullYear = new Date().getFullYear();
             const shortYear = new Date().toLocaleDateString("en", {year: "2-digit"});
             const week = 7 * 24 * 60 * 60 * 1000;
@@ -70,6 +72,8 @@ jobs:
             const currentSprint = getCurrentSprint(weeksBetween);
             let releaseNum = 1;
             let tag = `${shortYear}.${currentSprint}.${releaseNum}`;
+            console.log({repoTag, tag});
+
             while (tag == '${{ steps.last-tag.outputs.GIT_TAG }}') {
               releaseNum++;
               tag = `${shortYear}.${currentSprint}.${releaseNum}`;
