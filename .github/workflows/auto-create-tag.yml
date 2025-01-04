@@ -74,7 +74,7 @@ jobs:
             let tag = `${shortYear}.${currentSprint}.${releaseNum}`;
             console.log({repoTag, tag});
 
-            while (tag == '${{ steps.last-tag.outputs.GIT_TAG }}') {
+            while (tag == repoTag) {
               releaseNum++;
               tag = `${shortYear}.${currentSprint}.${releaseNum}`;
             }
