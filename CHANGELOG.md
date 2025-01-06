@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 4.2.0
+
+### Minor Changes
+
+- f2f038e: Add paragrapth
+
 ## 4.1.0
 
 ### Minor Changes
