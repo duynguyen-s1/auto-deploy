@@ -26,19 +26,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Get Tag
-        id: last-tag
+      - name: Get previous tag
+        id: prev-tag
         run: |
           git fetch --tags
-          echo "GIT_TAG= $(git tag --sort=committerdate | tail -1)" >> $GITHUB_OUTPUT
-      - name: Latest tag
-        run: echo ${{steps.last-tag.outputs.GIT_TAG}}
+          echo "prev-tag= $(git tag --sort=committerdate | tail -1)" >> $GITHUB_OUTPUT
 
-      - uses: actions/github-script@v7
+      - name: Show previous tag
+        run: echo ${{steps.prev-tag.outputs.prev-tag}}
+
+      - name: Generate new tag
+        uses: actions/github-script@v7
         id: generate-tag
         with:
           script: |
-            let repoTag = '${{ steps.last-tag.outputs.GIT_TAG }}';
+            let repoTag = '${{ steps.prev-tag.outputs.prev-tag }}';
             repoTag = repoTag.trim();
 
             const fullYear = new Date().getFullYear();
@@ -71,53 +73,27 @@ jobs:
             }
             const currentSprint = getCurrentSprint(weeksBetween);
             let releaseNum = 1;
-            let tag = `${shortYear}.${currentSprint}.${releaseNum}`;
-            console.log({repoTag, tag});
+            let newTag = `${shortYear}.${currentSprint}.${releaseNum}`;
 
-            while (tag == repoTag) {
+            while (newTag == repoTag) {
               releaseNum++;
-              tag = `${shortYear}.${currentSprint}.${releaseNum}`;
+              newTag = `${shortYear}.${currentSprint}.${releaseNum}`;
             }
-            return tag;
-      - name: Created tag
-        run: echo ${{steps.generate-tag.outputs.result}}
-
-      - uses: actions/checkout@v4
-      
-      - name: Get Tags
-        id: tags
-        run: |
-          git fetch --tags
+            return newTag;
 
       - name: Verify tag availability
         id: latest-tag
         run: |
           TAG=${{steps.generate-tag.outputs.result}}
           if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
-            echo "Tag ${TAG} exists"
+            echo "Tag ${TAG} already exist"
             LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-            echo $LATEST_TAG
-            
-            while [git show-ref --tags --verify --quiet "refs/tags/${TAG}"]
-            do
-              IFS='.' read -ra VERSION <<< "$LATEST_TAG"
-              echo ${VERSION[0]}
-              echo ${VERSION[1]}
-              echo ${VERSION[2]}
-              PUMP_VER=$((VERSION[2]+1))
-              NEXT_TAG="${VERSION[0]}.${VERSION[1]}.$PUMP_VER"
-              TAG=NEXT_TAG
-            done
-            echo $TAG
             echo "tag=${TAG}" >> $GITHUB_OUTPUT
           else
-            echo "Tag ${TAG} does not exist"
+            echo "Tag ${TAG} is available"
             echo "tag=${TAG}" >> $GITHUB_OUTPUT
           fi
 
-      - name: New tag
-        run: echo ${{steps.latest-tag.outputs.tag}}
-      - uses: actions/checkout@v4
       - run: git tag ${{steps.latest-tag.outputs.tag}} $COMMIT_ID
       - run: git push origin ${{steps.latest-tag.outputs.tag}}
   
