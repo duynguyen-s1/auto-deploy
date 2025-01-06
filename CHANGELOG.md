@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 4.4.0
+
+### Minor Changes
+
+- 84a9c22: update content
+
 ## 4.3.0
 
 ### Minor Changes
