@@ -1,0 +1,5 @@
+---
+"auto-deploy": patch
+---
+
+typo
