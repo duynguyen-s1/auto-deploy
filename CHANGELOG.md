@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 4.4.1
+
+### Patch Changes
+
+- 22634a1: typo
+
 ## 4.4.0
 
 ### Minor Changes
