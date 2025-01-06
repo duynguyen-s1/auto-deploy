@@ -75,7 +75,7 @@ jobs:
             let releaseNum = 1;
             let newTag = `${shortYear}.${currentSprint}.${releaseNum}`;
 
-            while (newTag == repoTag) {
+            while (repoTag <= newTag) {
               releaseNum++;
               newTag = `${shortYear}.${currentSprint}.${releaseNum}`;
             }
