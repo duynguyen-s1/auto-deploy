@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 4.3.0
+
+### Minor Changes
+
+- 8ee9f0d: Update title
+
 ## 4.2.0
 
 ### Minor Changes
