@@ -79,23 +79,20 @@ jobs:
               releaseNum++;
               newTag = `${shortYear}.${currentSprint}.${releaseNum}`;
             }
+            console.log({repoTag, newTag});
             return newTag;
 
       - name: Verify tag availability
-        id: latest-tag
         run: |
           TAG=${{steps.generate-tag.outputs.result}}
           if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
             echo "Tag ${TAG} already exist"
-            LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-            echo "tag=${TAG}" >> $GITHUB_OUTPUT
           else
             echo "Tag ${TAG} is available"
-            echo "tag=${TAG}" >> $GITHUB_OUTPUT
           fi
 
-      - run: git tag ${{steps.latest-tag.outputs.tag}} $COMMIT_ID
-      - run: git push origin ${{steps.latest-tag.outputs.tag}}
+      - run: git tag ${{steps.generate-tag.outputs.result}} $COMMIT_ID
+      - run: git push origin ${{steps.generate-tag.outputs.result}}
   
   trigger-stage-deploy:
     needs: [tag]
