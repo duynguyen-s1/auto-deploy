@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 4.5.0
+
+### Minor Changes
+
+- a585831: content update
+
 ## 4.4.1
 
 ### Patch Changes
