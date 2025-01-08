@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 4.6.0
+
+### Minor Changes
+
+- f37f0b6: Update content
+
 ## 4.5.0
 
 ### Minor Changes
