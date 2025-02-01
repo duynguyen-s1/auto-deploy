@@ -15,4 +15,4 @@ jobs:
     with:
       commitID: ${{ github.sha }}
       tagname: ''
-      env: ''
+      target_env: ''

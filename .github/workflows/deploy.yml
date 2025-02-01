@@ -6,7 +6,7 @@ on:
       tag:
         required: true
         type: string
-      env:
+      target_env:
         required: true
         type: string
 
@@ -20,7 +20,7 @@ jobs:
   build-deploy:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    environment: ${{ inputs.env}}
+    environment: ${{ inputs.target_env}}
     name: "Build and Deploy"
     steps:
       - name: Checkout
@@ -34,7 +34,7 @@ jobs:
       - name: Event received
         run: |
           echo ${{ inputs.tag }}
-          echo ${{ inputs.env }}
+          echo ${{ inputs.target_env }}
       # - name: Environment variables
       #   uses: ./.github/actions/env
       #   with:

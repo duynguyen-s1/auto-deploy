@@ -11,15 +11,15 @@ on:
         description: Tag Name
         required: true
         type: string
-      env:
+      target_env:
         description: Deploy Target
         required: true
         type: string
 
 env:
-  TAG: ${{ inputs.tagname}}
-  COMMIT_ID: ${{ inputs.commitID  }}
-  env: ${{ inputs.env || 'stage'}}
+  TAG: ${{ inputs.tagname }}
+  COMMIT_ID: ${{ inputs.commitID }}
+  TARGET_ENV: ${{ inputs.target_env || 'stage' }}
 
 jobs:
   tag:
@@ -39,7 +39,7 @@ jobs:
         run: echo ${{steps.prev-tag.outputs.prev-tag}}
 
       - name: Generate new tag
-        if: ${{ inputs.tagname == '' }}
+        if: ${{ env.TAG == '' }}
         uses: actions/github-script@v7
         id: generate-tag
         with:
@@ -89,7 +89,7 @@ jobs:
       - name: Verify tag availability
         id: verify-tag
         run: |
-          TAG=${{inputs.tagname || steps.generate-tag.outputs.result}}
+          TAG=${{ env.TAG || steps.generate-tag.outputs.result }}
           if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
             echo "Tag ${TAG} already exist"
           else
@@ -97,13 +97,13 @@ jobs:
             echo "NEWTAG=${TAG}" >> $GITHUB_OUTPUT
           fi
 
-      - run: git tag ${{inputs.tagname || steps.generate-tag.outputs.result}} $COMMIT_ID
-      - run: git push origin ${{inputs.tagname || steps.generate-tag.outputs.result}}
+      - run: git tag ${{ env.TAG || steps.generate-tag.outputs.result}} ${{ env.COMMIT_ID }}
+      - run: git push origin ${{ env.TAG || steps.generate-tag.outputs.result}}
   
   trigger-deploy:
     name: Trigger deploy workflow for stage
     needs: [tag]
     uses: ./.github/workflows/deploy.yml
     with:
-      env: ${{ inputs.env }}
+      target_env: ${{ inputs.TARGET_ENV }}
       tag: ${{ inputs.tagname || needs.tag.outputs.NEWTAG }}
