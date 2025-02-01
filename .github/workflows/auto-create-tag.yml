@@ -1,6 +1,7 @@
 name: Auto Create Tag
 
 on:
+  workflow_dispatch:
   workflow_call:
     inputs:
       commitID:
