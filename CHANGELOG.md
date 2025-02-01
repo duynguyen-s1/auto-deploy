@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 5.0.0
+
+### Major Changes
+
+- 1a99b14: Update content
+
 ## 4.7.0
 
 ### Minor Changes
