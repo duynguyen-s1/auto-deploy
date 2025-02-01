@@ -1,15 +1,14 @@
 name: Build & Deploy Environment
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      environment:
-        description: "Environment to deploy to"
+      tag:
         required: true
-        type: environment
-  
-  repository_dispatch:
-    types: [trigger-deploy]
+        type: string
+      env:
+        required: true
+        type: string
 
 permissions:
   id-token: write
@@ -21,7 +20,7 @@ jobs:
   build-deploy:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment || github.event.client_payload.env}}
+    environment: ${{ inputs.env}}
     name: "Build and Deploy"
     steps:
       - name: Checkout
@@ -34,9 +33,8 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Event received
         run: |
-          echo ${{ github.event.client_payload.tag }}
-          echo ${{ github.event.client_payload.env }}
-          echo ${{ inputs.environment || github.event.client_payload.env}}
+          echo ${{ inputs.tag }}
+          echo ${{ inputs.env }}
       # - name: Environment variables
       #   uses: ./.github/actions/env
       #   with:

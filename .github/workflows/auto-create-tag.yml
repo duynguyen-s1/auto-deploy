@@ -1,9 +1,9 @@
 name: Auto Create Tag
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      commit:
+      commitID:
         description: Commit ID
         required: true
         type: string
@@ -11,18 +11,21 @@ on:
         description: Tag Name
         required: true
         type: string
-
-  repository_dispatch:
-    types: [trigger-create-tag]
+      env:
+        description: Deploy Target
+        required: true
+        type: string
 
 env:
-  # TAG: ${{ inputs.tagname}}
-  COMMIT_ID: ${{ inputs.commit || github.event.client_payload.commitId }}
-  ENVIRONMENT: ${{ github.event.client_payload.environment || 'stage'}}
+  TAG: ${{ inputs.tagname}}
+  COMMIT_ID: ${{ inputs.commitID  }}
+  env: ${{ inputs.env || 'stage'}}
 
 jobs:
   tag:
     runs-on: ubuntu-latest
+    outputs:
+      NEWTAG: ${{ steps.verify-tag.outputs.NEWTAG }}
     steps:
       - uses: actions/checkout@v4
       
@@ -84,33 +87,23 @@ jobs:
             return newTag;
 
       - name: Verify tag availability
+        id: verify-tag
         run: |
           TAG=${{inputs.tagname || steps.generate-tag.outputs.result}}
           if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
             echo "Tag ${TAG} already exist"
           else
             echo "Tag ${TAG} is available"
+            echo "NEWTAG=${TAG}" >> $GITHUB_OUTPUT
           fi
 
       - run: git tag ${{inputs.tagname || steps.generate-tag.outputs.result}} $COMMIT_ID
       - run: git push origin ${{inputs.tagname || steps.generate-tag.outputs.result}}
   
-  trigger-stage-deploy:
+  trigger-deploy:
+    name: Trigger deploy workflow for stage
     needs: [tag]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger deploy workflow for stage
-        run: |
-          repo_owner="duynguyen-s1"
-          repo_name="auto-deploy"
-          event_type="trigger-deploy" 
-          tag=$TAG
-          env=$ENVIRONMENT
-
-          curl -L \
-            -X POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.PAT_ACCESS_TOKEN }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/$repo_owner/$repo_name/dispatches \
-            -d "{\"event_type\": \"$event_type\", \"client_payload\": {\"tag\": \"$tag\", \"env\": \"$env\" }}"
+    uses: ./.github/workflows/deploy.yml
+    with:
+      env: ${{ inputs.env }}
+      tag: ${{ inputs.tagname || needs.tag.outputs.NEWTAG }}

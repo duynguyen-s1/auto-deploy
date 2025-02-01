@@ -12,9 +12,6 @@ on:
         required: true
         type: string
 
-  # repository_dispatch:
-  #   types: [trigger-create-tag]
-
 env:
   TAG: ${{ inputs.tagname || github.event.client_payload.tag}}
   COMMIT_ID: ${{ inputs.commit || github.event.client_payload.commitId }}
