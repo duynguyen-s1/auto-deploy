@@ -1,5 +1,11 @@
 # auto-deploy
 
+## 6.0.0
+
+### Major Changes
+
+- 7be0d7a: Update page content
+
 ## 5.0.0
 
 ### Major Changes
