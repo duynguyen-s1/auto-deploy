@@ -10,11 +10,9 @@ on:
 jobs:
   trigger-create-tag:
     # if: startsWith(github.head_ref, 'changeset-release/') && github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger create-tag workflow
-        uses: ./.github/workflows/auto-create-tag.yml
-        with:
-          commit: ${{ github.sha }}
-          tagname: ''
-          env: ''
+    name: Trigger create-tag workflow
+    uses: ./.github/workflows/auto-create-tag.yml
+    with:
+      commitID: ${{ github.sha }}
+      tagname: ''
+      env: ''
