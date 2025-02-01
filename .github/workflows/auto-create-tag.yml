@@ -105,5 +105,5 @@ jobs:
     needs: [tag]
     uses: ./.github/workflows/deploy.yml
     with:
-      target_env: ${{ inputs.TARGET_ENV }}
+      target_env: ${{ inputs.TARGET_ENV || 'stage' }}
       tag: ${{ inputs.tagname || needs.tag.outputs.NEWTAG }}
